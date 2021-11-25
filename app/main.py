@@ -14,6 +14,9 @@ from flask import (
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 
+import config
+
+
 pd.set_option("display.max_rows", 500)
 pd.set_option("display.max_columns", 500)
 pd.set_option("display.width", 1000)
@@ -67,7 +70,9 @@ cars.loc[cars.price_in_euros.isnull(), "price_in_euros"] = round(
 )
 info = cars.describe()
 
-app = Flask(__name__)
+app = Flask(
+    __name__, static_folder=config.STATIC_FOLDER, template_folder=config.TEMPLATE_FOLDER
+)
 
 
 @app.route("/", methods=("POST", "GET"))

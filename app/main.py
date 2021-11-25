@@ -11,11 +11,9 @@ from flask import (
     render_template_string,
     Response,
 )
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
+from sklearn.tree import DecisionTreeClassifier
 
 import config
-
 
 pd.set_option("display.max_rows", 500)
 pd.set_option("display.max_columns", 500)
@@ -39,17 +37,17 @@ cars.columns = [
 ]
 cars.drop(columns="price_to_drop", inplace=True)
 numeric_columns = cars.loc[
-    :,
-    [
-        "acceleration_in_sec",
-        "top_speed_km_per_h",
-        "range_km",
-        "efficiency_wh_per_hour",
-        "fast_charge_speed_km_per_h",
-        "number_of_seats",
-        "price_in_euros",
-    ],
-]
+                  :,
+                  [
+                      "acceleration_in_sec",
+                      "top_speed_km_per_h",
+                      "range_km",
+                      "efficiency_wh_per_hour",
+                      "fast_charge_speed_km_per_h",
+                      "number_of_seats",
+                      "price_in_euros",
+                  ],
+                  ]
 
 cars.acceleration_in_sec = cars.acceleration_in_sec.str.replace("sec", "").astype(
     "float"
@@ -68,7 +66,7 @@ cars.price_in_euros = (
 cars.loc[cars.price_in_euros.isnull(), "price_in_euros"] = round(
     cars.price_in_euros.mean(), 2
 )
-info = cars.describe()
+info = cars.describe(percentiles=[])
 
 app = Flask(
     __name__, static_folder=config.STATIC_FOLDER, template_folder=config.TEMPLATE_FOLDER
@@ -89,5 +87,4 @@ def html_table1():
     return render_template(
         "view.html",
         tables=[info.to_html(classes="data")],
-        titles=cars_view.columns.values,
     )

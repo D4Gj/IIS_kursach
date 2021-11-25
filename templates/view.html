@@ -6,7 +6,7 @@
 
 {% block content %}
     {% for table in tables %}
-        <h2>{{ titles[loop.index] }}</h2>
+
         {{ table | safe }}
     {% endfor %}
 

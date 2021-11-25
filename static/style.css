@@ -3,27 +3,36 @@ body {
     align-content: center;
 }
 
-a, h1, h2 {
+a, h2 {
     color: #377ba8;
 }
 
 h1, h2 {
     margin: 0;
+    text-align: center;
 }
 
+.center {
+  display: block;
+  margin-left: 40%;
+  margin-right: 35%;
+}
 h1 {
     border-bottom: 2px solid #eee;
 }
 
 h2 {
     font-size: 1.2em;
+    margin-left: 15%;
+    margin-right: 15%;
+    color: black;
 }
 
 table.dataframe, .dataframe th, .dataframe td {
     border: black;
     border-bottom: 1px solid #C8C8C8;
     border-collapse: collapse;
-    text-align: left;
+    text-align: center;
     padding: 10px;
     margin-bottom: 40px;
     font-size: 1em;

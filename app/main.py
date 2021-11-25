@@ -127,17 +127,17 @@ def html_mean_range():
     )
 
 
-@app.route("/clustering", methods=("POST", "GET"))
+@app.route("/classification", methods=("POST", "GET"))
 def html_clustering():
     print(cars.tail())
-    names, values, score = clustering()
+    names, values, score = classification()
     print(names)
     print(list(values))
     clusters = pd.DataFrame(data=[values], columns=names, index=["Важность"])
 
     return render_template(
-        "clustering.html",
-        score=round(score,5),
+        "classification.html",
+        score=round(score, 5),
         tables=[clusters.to_html(classes="data")]
     )
 
@@ -201,7 +201,7 @@ def mean_range_find():
     return round(result, 2)
 
 
-def clustering():
+def classification():
     x = cars[['top_speed_km_per_h', 'range_km', "number_of_seats"]]
     y = cars['efficiency_wh_per_hour']
     clf = DecisionTreeClassifier()

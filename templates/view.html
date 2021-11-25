@@ -1,10 +1,14 @@
-<!doctype html>
-<title>Simple tables</title>
-<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
-<div class=page>
+{% extends 'base.html' %}
+
+{% block title %}
     <h1>Cars</h1>
+{% endblock %}
+
+{% block content %}
     {% for table in tables %}
-    <h2>{{ titles[loop.index] }}</h2>
-    {{ table|safe }}
+        <h2>{{ titles[loop.index] }}</h2>
+        {{ table | safe }}
     {% endfor %}
-</div>
+
+    <img src="{{ url_for('static', filename='python.jpg') }}" alt="Cool Python">
+{% endblock %}

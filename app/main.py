@@ -24,7 +24,7 @@ pd.set_option("display.width", 1000)
 
 cars = pd.read_csv("Cheapestelectriccars-EVDatabase.csv")
 cars_view = pd.read_csv("Cheapestelectriccars-EVDatabase.csv")
-cars_view.drop(columns=["PriceinGermany", "PriceinUK"], inplace=True)
+cars_view.drop(columns=["PriceinUK"], inplace=True)
 cars.columns = [
     "name",
     "subtitle",

@@ -24,6 +24,9 @@ pd.set_option("display.width", 1000)
 
 cars = pd.read_csv("Cheapestelectriccars-EVDatabase.csv")
 cars_view = pd.read_csv("Cheapestelectriccars-EVDatabase.csv")
+cars_view.loc[cars.price_in_euros.isnull(), "price_in_euros"] = round(
+    cars.price_in_euros.mean(), 2
+)
 cars_view.drop(columns=["PriceinUK"], inplace=True)
 cars.columns = [
     "name",

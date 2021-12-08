@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Spotify
+{% endblock %}
+
+{% block content %}
+<img src="{{ url_for('static', filename='steams_count.png') }}" alt="steams_count" , class="center">
+<h1>
+    Общее количество прослушиваний составляет {{listening}} раз <a href="/steams_count.pdf">PDF</a>
+</h1>
+
+{% endblock %}

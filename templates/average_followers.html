@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Spotify
+{% endblock %}
+
+{% block content %}
+<img src="{{ url_for('static', filename='average_followers.png') }}" alt="average_followers" , class="center">
+<h1>
+    Среднее количество подписчиков у исполнителей составляет {{ average }} человек <a href="/average_followers.pdf">PDF</a>
+</h1>
+{% endblock %}

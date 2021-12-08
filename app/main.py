@@ -121,7 +121,7 @@ def html_min():
 
 @app.route("/min_price.pdf")
 def send_pdf_min():
-    return send_file(config.STATIC_FOLDER + "\min_price.pdf")
+    return send_file(config.STATIC_FOLDER + "/min_price.pdf")
 
 
 @app.route("/max_speed", methods=("POST", "GET"))
@@ -139,7 +139,7 @@ def html_max_speed():
 
 @app.route("/max_speed.pdf")
 def send_pdf_max():
-    return send_file(config.STATIC_FOLDER + "\max_speed.pdf")
+    return send_file(config.STATIC_FOLDER + "/max_speed.pdf")
 
 
 @app.route("/mean_range", methods=("POST", "GET"))
@@ -158,7 +158,7 @@ def html_mean_range():
 
 @app.route("/mean_range.pdf")
 def send_pdf_mean_range():
-    return send_file(config.STATIC_FOLDER + "\mean_range.pdf")
+    return send_file(config.STATIC_FOLDER + "/mean_range.pdf")
 
 
 @app.route("/classification", methods=("POST", "GET"))
@@ -191,7 +191,7 @@ def html_clustering():
 
 @app.route("/classification.pdf")
 def send_pdf_classification():
-    return send_file(config.STATIC_FOLDER + "\classification.pdf")
+    return send_file(config.STATIC_FOLDER + "/classification.pdf")
 
 
 @app.route("/cross_validation", methods=("POST", "GET"))

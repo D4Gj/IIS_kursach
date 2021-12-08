@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    Cars
+Cars
 {% endblock %}
 
 {% block content %}
-    <img src="{{ url_for('static', filename='max_speed.png') }}" alt="max_png", class="center">
-    <h1>
-        Самой быстрой машиной является {{ name }} со скоростью {{ speed }} километров в час
-    </h1>
+<img src="{{ url_for('static', filename='max_speed.png') }}" alt="max_png" , class="center">
+<h1>
+    Самой быстрой машиной является {{ name }} со скоростью {{ speed }} километров в час <a
+        href="/max_speed.pdf">PDF</a>
+</h1>
 {% endblock %}

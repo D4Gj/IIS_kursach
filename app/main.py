@@ -1,10 +1,12 @@
+import json
+import pickle
+
 import pandas as pd
 import numpy as np
 import io
 import random
 from matplotlib import pyplot as plt
 from sklearn.cluster import AgglomerativeClustering
-
 from flask import (
     Flask,
     request,
@@ -13,10 +15,15 @@ from flask import (
     redirect,
     render_template_string,
     Response,
+    url_for,
+    make_response,
+    current_app,
+    send_file,
 )
 from sklearn.tree import DecisionTreeClassifier
-
+from fpdf import FPDF
 import config
+import joblib
 
 pd.set_option("display.max_rows", 500)
 pd.set_option("display.max_columns", 500)
@@ -79,6 +86,7 @@ app = Flask(
 
 @app.route("/", methods=("POST", "GET"))
 def html_table():
+    cross_validation_start()
     return render_template(
         "index.html",
         tables=[cars_view.to_html(classes="data")],
@@ -100,6 +108,9 @@ def html_min():
     print(cars.tail())
     name, price = min_price_find()
     price *= 1000
+    create_pdf("Отчёт по самой минимальной цене", f"Самой дешёвой машиной является {name} с ценой в {price} евро",
+               "static/min.png",
+               "min_price")
     return render_template(
         "min_price.html",
         name=name,
@@ -107,10 +118,17 @@ def html_min():
     )
 
 
+@app.route("/min_price.pdf")
+def send_pdf_min():
+    return send_file(config.STATIC_FOLDER + "\min_price.pdf")
+
+
 @app.route("/max_speed", methods=("POST", "GET"))
 def html_max_speed():
     print(cars.tail())
     name, speed = max_speed_find()
+    create_pdf("Отчёт по максимальной скорости", f"Самой быстрой машиной является {name}, со скорость {speed}.",
+               image_path="static/max_speed.png", save_name="max_speed")
     return render_template(
         "max_speed.html",
         name=name,
@@ -118,14 +136,28 @@ def html_max_speed():
     )
 
 
+@app.route("/max_speed.pdf")
+def send_pdf_max():
+    return send_file(config.STATIC_FOLDER + "\max_speed.pdf")
+
+
 @app.route("/mean_range", methods=("POST", "GET"))
 def html_mean_range():
     print(cars.tail())
     speed = mean_range_find()
+    create_pdf(title="Средняя дистанция прохождения",
+               text=f"В среднем электрокары проезжают {speed} километров.",
+               image_path="static/mean_range.png",
+               save_name="mean_range")
     return render_template(
         "mean_range.html",
         speed=speed,
     )
+
+
+@app.route("/mean_range.pdf")
+def send_pdf_mean_range():
+    return send_file(config.STATIC_FOLDER + "\mean_range.pdf")
 
 
 @app.route("/classification", methods=("POST", "GET"))
@@ -135,12 +167,35 @@ def html_clustering():
     print(names)
     print(list(values))
     clusters = pd.DataFrame(data=[values], columns=names, index=["Важность"])
-
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.add_font('DejaVu', '', 'font/DejaVuSansCondensed.ttf', uni=True)
+    pdf.set_font('DejaVu', '', 14)
+    pdf.write(txt="Классификация", h=15)
+    pdf.ln(25)
+    pdf.write(txt=clusters.to_string(col_space=21), h=7)
+    pdf.ln(10)
+    pdf.write(
+        txt="Исходя из классификации, можно сказать, что наибольшее влияние на эффективность работы электродвигателя "
+            "оказывает дальность расстояния, а именно, сколько километров сможет проехать электроавтомобиль на одном "
+            "заряде. Качество модели:" + str(
+            score), h=7)
+    pdf.output("static/classification.pdf")
     return render_template(
         "classification.html",
         score=round(score, 5),
         tables=[clusters.to_html(classes="data")]
     )
+
+
+@app.route("/classification.pdf")
+def send_pdf_classification():
+    return send_file(config.STATIC_FOLDER + "\classification.pdf")
+
+
+@app.route("/cross_validation", methods=("POST", "GET"))
+def cross_validation():  # Кросс-валидация качество модели
+    return render_template("cross_validation.html", validation=str(cross_validation_start()))
 
 
 # --Поиск машины с минимальной скоростью--
@@ -211,5 +266,40 @@ def classification():
     # Вывод важности
     print(clf.feature_importances_)
     print(clf.score(x, y))  # верность классификации
-    names = ["Максимальная скорость", "Максимальная дистация", "Количество сидений"]
+    names = ["Макс скорость", "Макс дистанция", "Количество сидений"]
+    save_file(clf, "static/model.pkl")
     return names, clf.feature_importances_, clf.score(x, y),
+
+
+def create_pdf(title, text, image_path, save_name):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.add_font('DejaVu', '', 'font/DejaVuSansCondensed.ttf', uni=True)
+    pdf.set_font('DejaVu', '', 14)
+    pdf.write(txt=title, h=15)
+    pdf.ln(20)
+    pdf.image(image_path, x=10, y=20, w=170)
+    pdf.ln(130)  # ниже на 85
+    pdf.write(
+        txt=text,
+        h=7)
+    pdf.output("static/" + save_name + ".pdf")
+
+
+def cross_validation_start():
+    x = cars[['top_speed_km_per_h', 'range_km', "number_of_seats"]]
+    y = cars['efficiency_wh_per_hour']
+
+    clf = load_file("static/model.pkl")
+
+    cv_results = cross_val_score(clf, x, y, cv=3)
+
+    return cv_results.mean()
+
+
+def load_file(filename):
+    return joblib.load(filename)
+
+
+def save_file(model, filename):
+    joblib.dump(model, filename)

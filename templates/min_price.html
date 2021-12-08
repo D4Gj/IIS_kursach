@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    Cars
+Cars
 {% endblock %}
 
 {% block content %}
-    <img src="{{ url_for('static', filename='min.png') }}" alt="min_png", class="center">
-    <h1>
-        Самой дешёвой машиной является {{ name }} с ценой {{ price }} евро
-    </h1>
+<img src="{{ url_for('static', filename='min.png') }}" alt="min_png" , class="center">
+<h1>
+    Самой дешёвой машиной является {{ name }} с ценой {{ price }} евро <a href="/min_price.pdf">PDF</a>
+</h1>
+
 {% endblock %}

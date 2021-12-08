@@ -6,6 +6,7 @@ import numpy as np
 import io
 import random
 from matplotlib import pyplot as plt
+from sklearn.model_selection import cross_validate, cross_val_score
 from sklearn.cluster import AgglomerativeClustering
 from flask import (
     Flask,

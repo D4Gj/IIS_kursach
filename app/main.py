@@ -55,6 +55,7 @@ data_view.drop(columns=["Weeks Charted", "Song ID", "Week of Highest Charting"],
 
 data['Streams'] = data['Streams'].str.replace(",", "").astype("int")
 data['Artist Followers'] = data['Artist Followers'].str.replace(" ", "1").astype("int")
+data['Popularity'] = data['Popularity'].str.replace(" ", "1").astype("int")
 
 # numeric_columns = data.loc[
 #                   :,
@@ -140,7 +141,7 @@ def send_pdf_max():
 
 
 @app.route("/classification", methods=("POST", "GET"))
-def html_clustering():
+def html_classification():
     print(data.tail())
     names, values, score = classification()
     print(names)
@@ -155,10 +156,9 @@ def html_clustering():
     pdf.write(txt=clusters.to_string(col_space=21), h=7)
     pdf.ln(10)
     pdf.write(
-        txt="Исходя из классификации, можно сказать, что наибольшее влияние на эффективность работы электродвигателя "
-            "оказывает дальность расстояния, а именно, сколько километров сможет проехать электроавтомобиль на одном "
-            "заряде. Качество модели:" + str(
-            score), h=7)
+        txt="Исходя из классификации, можно сказать, что наибольшее влияние на количество попаданий трека в список "
+            "чартов "
+            "оказывает количество прослушиваний. Качество модели:" + str(score), h=7)
     pdf.output("static/classification.pdf")
     return render_template(
         "classification.html",
@@ -214,15 +214,15 @@ def average_followers_find():
 
 
 def classification():
-    x = data[['top_speed_km_per_h', 'range_km', "number_of_seats"]]
-    y = data['efficiency_wh_per_hour']
+    x = data[['Streams', 'Artist Followers', "Popularity"]]
+    y = data['Number of Times Charted']
     clf = DecisionTreeClassifier()
     clf.fit(x, y)
     print(clf.feature_names_in_)
     # Вывод важности
     print(clf.feature_importances_)
     print(clf.score(x, y))  # верность классификации
-    names = ["Макс скорость", "Макс дистанция", "Количество сидений"]
+    names = ["Количество прослушиваний", "Подписчики исполнителя", "Популярность трека"]
     save_file(clf, "static/model.pkl")
     return names, clf.feature_importances_, clf.score(x, y),
 
@@ -243,8 +243,8 @@ def create_pdf(title, text, image_path, save_name):
 
 
 def cross_validation_start():
-    x = data[['top_speed_km_per_h', 'range_km', "number_of_seats"]]
-    y = data['efficiency_wh_per_hour']
+    x = data[['Streams', 'Artist Followers', "Popularity"]]
+    y = data['Number of Times Charted']
 
     clf = load_file("static/model.pkl")
 

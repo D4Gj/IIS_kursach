@@ -33,21 +33,6 @@ pd.set_option("display.width", 1000)
 
 data = pd.read_csv("spotify_dataset.csv")
 data_view = pd.read_csv("spotify_dataset.csv")
-# cars_view["PriceinGermany"] = cars_view["PriceinGermany"].replace(np.NAN, "no info")
-# cars_view.drop(columns=["PriceinUK"], inplace=True)
-# data.columns = [
-#     "name",
-#     "subtitle",
-#     "acceleration_in_sec",
-#     "top_speed_km_per_h",
-#     "range_km",
-#     "efficiency_wh_per_hour",
-#     "fast_charge_speed_km_per_h",
-#     "drive",
-#     "number_of_seats",
-#     "price_in_euros",
-#     "price_to_drop",
-# ]
 
 
 data.drop(columns=["Weeks Charted", "Song ID", "Week of Highest Charting"], inplace=True)
@@ -57,36 +42,6 @@ data['Streams'] = data['Streams'].str.replace(",", "").astype("int")
 data['Artist Followers'] = data['Artist Followers'].str.replace(" ", "1").astype("int")
 data['Popularity'] = data['Popularity'].str.replace(" ", "1").astype("int")
 
-# numeric_columns = data.loc[
-#                   :,
-#                   [
-#                       "acceleration_in_sec",
-#                       "top_speed_km_per_h",
-#                       "range_km",
-#                       "efficiency_wh_per_hour",
-#                       "fast_charge_speed_km_per_h",
-#                       "number_of_seats",
-#                       "price_in_euros",
-#                   ],
-#                   ]
-#
-# data.acceleration_in_sec = data.acceleration_in_sec.str.replace("sec", "").astype(
-#     "float"
-# )
-# data.top_speed_km_per_h = data.top_speed_km_per_h.str.replace("km/h", "").astype("int")
-# data.range_km = data.range_km.str.replace("km", "").astype("int")
-# data.efficiency_wh_per_hour = data.efficiency_wh_per_hour.str.replace(
-#     "Wh/km", ""
-# ).astype("int")
-# data.fast_charge_speed_km_per_h = data.fast_charge_speed_km_per_h.str.replace(
-#     "km/h", ""
-# )
-# data.price_in_euros = (
-#     data.price_in_euros.str.replace("€", "").str.replace(",", ".").astype("float")
-# )
-# data.loc[data.price_in_euros.isnull(), "price_in_euros"] = round(
-#     data.price_in_euros.mean(), 2
-# )
 info = data.describe(percentiles=[])
 
 app = Flask(
@@ -186,7 +141,7 @@ def steams_count_find():
     fig, ax = plt.subplots()
     ax.set_title('Количество прослушиваний')
     plt.style.context('bmh')
-    ax.set_xlabel('Исполнитель')
+    ax.set_xlabel('Песня')
     ax.set_ylabel('Количество прослушиваний (10 млн)')
     plt.plot(data['Streams'])
     plt.grid('on')
